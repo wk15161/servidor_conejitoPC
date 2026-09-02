@@ -9,7 +9,18 @@ const jugadores = new Map();
 console.log(`Servidor WebSocket iniciado en puerto ${PORT}`);
 
 
-wss.on("connection", (socket) => {
+function comprobarSiEsUnservidor(request){
+    const userAgent = request.headers["user-agent"] || "";
+    return userAgent === "ConejitoPC-Server-Monitor/1.0";
+}
+
+wss.on("connection", (socket, request) => {
+
+    if(comprobarSiEsUnservidor(request)){
+       socket.close();
+        return; 
+    }
+    
 
     // Buscar el primer ID disponible
     let jugadorId = 1;
